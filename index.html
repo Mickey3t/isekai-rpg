@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>異世界転生冒険記</title>
+
+<style>
+
+* { box-sizing: border-box; }
+
+body {
+
+  margin: 0;
+
+  background: #101b2b;
+
+  color: white;
+
+  font-family: sans-serif;
+
+  text-align: center;
+
+}
+
+.game {
+
+  min-height: 100vh;
+
+  padding: 30px 18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: linear-gradient(#203f5c, #101b2b);
+
+}
+
+h1 {
+
+  font-size: 34px;
+
+  color: #ffe29a;
+
+  text-shadow: 3px 3px #513b22;
+
+}
+
+.castle {
+
+  font-size: 90px;
+
+  margin: 25px 0;
+
+}
+
+.subtitle {
+
+  color: #c9d9e8;
+
+  letter-spacing: 3px;
+
+}
+
+button {
+
+  width: 85%;
+
+  max-width: 300px;
+
+  padding: 17px;
+
+  margin-top: 15px;
+
+  border: 2px solid #f5d48b;
+
+  border-radius: 10px;
+
+  background: #80552d;
+
+  color: white;
+
+  font-size: 19px;
+
+  font-weight: bold;
+
+}
+
+button:active { background: #bd8746; }
+
+#message {
+
+  margin-top: 25px;
+
+  line-height: 1.8;
+
+  color: #ffe29a;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="game">
+
+  <p class="subtitle">～ 剣と魔法の異世界へ ～</p>
+
+  <h1>異世界転生<br>冒険記</h1>
+
+  <div class="castle">🏰</div>
+
+  <p>ここから、君の伝説が始まる。</p>
+
+  <button onclick="startGame()">冒険を始める</button>
+
+  <button onclick="showContinue()">冒険を続ける</button>
+
+  <div id="message"></div>
+
+</div>
+
+<script>
+
+function startGame() {
+
+  document.getElementById("message").innerHTML =
+
+    "異世界エルディアへようこそ！<br>君は新たな冒険者として目覚めた。";
+
+}
+
+function showContinue() {
+
+  document.getElementById("message").textContent =
+
+    "冒険の記録はまだありません。";
+
+}
+
+</script>
+
+</body>
+
+</html>
