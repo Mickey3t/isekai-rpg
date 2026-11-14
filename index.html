@@ -25,4 +25,352 @@ html,body{margin:0;height:100%;background:#070b17;color:#fff;overflow:hidden;ove
 .logo small{display:block;letter-spacing:.35em;color:#cfd8ff;font-size:12px;margin-bottom:6px}
 .logo h1{margin:0;font-size:46px;letter-spacing:.08em;font-weight:800;
   background:linear-gradient(#fff6c8,#f2b84b 60%,#c97d1c);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 3px 0 rgba(
+  filter:drop-shadow(0 3px 0 rgba(60,25,0,.7)) drop-shadow(0 0 14px rgba(255,200,90,.45))}
+.logo p{margin:8px 0 0;color:#ffe9b8;font-size:14px;letter-spacing:.2em}
+.btn{position:relative;width:250px;margin:7px 0;padding:15px 0;font-size:18px;font-weight:700;letter-spacing:.2em;color:#fff;
+  background:linear-gradient(#3d6fb8,#244a86);border:2px solid #cfe3ff;border-radius:12px;
+  box-shadow:0 4px 0 #14294d,0 8px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35);font-family:inherit}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #14294d,0 3px 8px rgba(0,0,0,.4)}
+.btn:disabled{opacity:.4}
+.btn.gold{background:linear-gradient(#f4c64f,#c88a1c);border-color:#fff3c4;color:#3a2200;box-shadow:0 4px 0 #6d4a0b,0 8px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.6)}
+.copy{position:relative;margin-top:14px;font-size:11px;color:#c9c3e0;opacity:.8}
+/* ---------- game ---------- */
+#game{position:absolute;inset:0;display:none;flex-direction:column;background:radial-gradient(#16203a,#080c18);
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.hud{display:flex;align-items:center;gap:10px;margin:8px 8px 6px;padding:8px 12px;border:2px solid var(--line);border-radius:10px;
+  background:linear-gradient(rgba(20,32,80,.95),rgba(8,14,44,.95));box-shadow:inset 0 0 0 2px #2a3a8a;font-size:13px}
+.hud b{color:var(--gold)}
+.hp{flex:1}
+.bar{height:9px;margin-top:3px;border-radius:5px;background:#1a1f33;border:1px solid #5b6593;overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:linear-gradient(#8df29b,#2fa24a);transition:width .3s}
+.menu{padding:6px 10px;font-size:12px;color:#fff;background:#2a3a6a;border:1px solid #8fa0d8;border-radius:8px;font-family:inherit}
+#stage{position:relative;width:calc(100% - 16px);margin:0 8px;aspect-ratio:1;border:3px solid #d8c07a;border-radius:10px;overflow:hidden;
+  box-shadow:0 0 0 2px #4a3a14,0 8px 24px rgba(0,0,0,.6)}
+#cv{width:100%;height:100%;display:block;touch-action:none}
+#banner{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:20px;letter-spacing:.25em;font-weight:700;
+  text-shadow:0 2px 6px #000,0 0 14px rgba(255,220,120,.7);opacity:0;pointer-events:none}
+#banner.show{animation:ban 2.6s ease}
+@keyframes ban{0%{opacity:0;transform:translateY(-8px)}15%,75%{opacity:1;transform:none}100%{opacity:0}}
+#dlg{position:absolute;left:8px;right:8px;bottom:8px;min-height:92px;display:none;text-align:left;
+  padding:9px 14px 20px;background:rgba(6,12,56,.94);border:3px solid var(--line);border-radius:10px;box-shadow:inset 0 0 0 2px #2a3a8a,0 4px 14px rgba(0,0,0,.5)}
+#dname{color:var(--gold);font-size:13px;font-weight:700;margin-bottom:3px;letter-spacing:.1em}
+#dtext{font-size:16px;line-height:1.55;min-height:25px}
+#dnext{position:absolute;right:14px;bottom:5px;font-size:12px;color:#fff;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+#pad{flex:1;display:flex;align-items:center;justify-content:space-around;padding:6px 10px}
+#dpad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:4px}
+.d{border:2px solid #b8c8f0;border-radius:14px;color:#fff;font-size:22px;font-family:inherit;touch-action:none;
+  background:linear-gradient(#41568f,#25335f);box-shadow:0 3px 0 #111a38}
+.d.on,.d:active{transform:translateY(2px);background:linear-gradient(#5a74bb,#34478a);box-shadow:none}
+#aBtn{width:92px;height:92px;border-radius:50%;font-size:20px;font-weight:800;color:#4a2a00;font-family:inherit;
+  background:radial-gradient(circle at 35% 30%,#ffe9a0,#e3a52c);border:3px solid #fff3c4;box-shadow:0 5px 0 #7a520d,0 8px 16px rgba(0,0,0,.5)}
+#aBtn:active{transform:translateY(4px);box-shadow:0 1px 0 #7a520d}
+@media (max-height:700px){#dpad{grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,50px)}#aBtn{width:76px;height:76px}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="title">
+  <div class="moon"></div>
+  <svg class="castle" viewBox="0 0 200 110" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <g fill="#090e26">
+      <path d="M0 110V92q30-10 55-4t45-8q30-8 55 2t45-6v34z"/>
+      <rect x="22" y="58" width="22" height="46"/><polygon points="19,60 33,32 47,60"/>
+      <rect x="84" y="36" width="32" height="68"/><polygon points="80,38 100,6 120,38"/>
+      <rect x="152" y="64" width="22" height="40"/><polygon points="149,66 163,40 177,66"/>
+      <rect x="44" y="76" width="40" height="28"/><rect x="116" y="76" width="36" height="28"/>
+    </g>
+    <g fill="#ffd77a"><rect x="31" y="70" width="4" height="7"/><rect x="97" y="50" width="6" height="9"/><rect x="161" y="76" width="4" height="7"/><rect x="60" y="86" width="4" height="6"/><rect x="132" y="86" width="4" height="6"/></g>
+  </svg>
+  <div class="logo"><small>ISEKAI  FANTASY  RPG</small><h1>異世界エルディア</h1><p>～運命を切り開く冒険者～</p></div>
+  <button class="btn gold" onclick="startGame()">冒 険 を は じ め る</button>
+  <button class="btn" id="contBtn" onclick="continueGame()">冒 険 を 続 け る</button>
+  <div class="copy">© Elderia Project</div>
+</div>
+
+<div id="game">
+  <div class="hud">
+    <div>冒険者<br><b id="hLv">Lv.1</b></div>
+    <div class="hp">HP <b id="hHp">30/30</b><div class="bar"><i id="hBar"></i></div></div>
+    <div>G <b id="hG">50</b></div>
+    <button class="menu" onclick="backToTitle()">タイトル</button>
+  </div>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div id="banner"></div>
+    <div id="dlg"><div id="dname"></div><div id="dtext"></div><div id="dnext">▼</div></div>
+  </div>
+  <div id="pad">
+    <div id="dpad">
+      <span></span><button class="d" data-d="up">▲</button><span></span>
+      <button class="d" data-d="left">◀</button><span></span><button class="d" data-d="right">▶</button>
+      <span></span><button class="d" data-d="down">▼</button><span></span>
+    </div>
+    <button id="aBtn">話す</button>
+  </div>
+</div>
+
+</div>
+<script>
+"use strict";
+/* ================= データ ================= */
+const N=11,T=48,S=N*T;
+const D={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+const BLOCK=new Set("TWRHDO");
+const maps={
+ field:{name:"始まりの草原",exit:{area:"village",x:5,y:9,dir:"up"},rows:[
+  "TTTTTETTTTT","TGGFGPGGGGT","TGGGGPGGFGT","GGWWGPGGGGG","GWWWGPGGTGG","GGWWGPPPPGG",
+  "GGGGGPGGFGG","GFGGGPGGGGT","GGGGGPGTGGT","TGGFGPGGGGT","TTGGGPGGGTT"]},
+ village:{name:"エルディアの村",exit:{area:"field",x:5,y:1,dir:"down"},rows:[
+  "TTTTTTTTTTT","TRRGGGGRRGT","THDGGGGHDGT","GGGGGPGGGGG","GFGPPPPPGFG","GGGGGPGGOGG",
+  "GGGGGPGGGGG","GFGGGPGGGFG","GGGGGPGGGGG","TGGGGPGGGGT","TTTTTETTTTT"]}
+};
+const PAL={
+ hero:{body:"#3b6fd1",pants:"#2d3a63",hair:"#5a3a22",cape:"#c23b3b",sword:1,band:1},
+ elder:{body:"#7a4b9a",pants:"#3a2a4a",hair:"#eeeeee",beard:1},
+ villager:{body:"#8a9b4a",pants:"#5b4a35",hair:"#7a4a2a"},
+ traveler:{body:"#7a5a3a",pants:"#3a3a3a",hair:"#bdbdbd",hat:"#4a6b4a"},
+ girl:{body:"#e07aa0",pants:"#6a3a4a",hair:"#e0b050",ribbon:1}
+};
+const NPCS=[
+ {a:"village",x:6,y:3,name:"村長",pal:PAL.elder,dir:"down",lines:["よく来たな、冒険者よ。","ここは辺境の村エルディア。","北の草原には魔物が潜んでおる。","まずは世界を見て回るといい。"]},
+ {a:"village",x:7,y:6,name:"村人",pal:PAL.villager,dir:"left",lines:["ようこそ、エルディアの村へ！","この井戸の水は、どんな傷も癒やすと言われておる。"]},
+ {a:"village",x:3,y:7,name:"旅人",pal:PAL.traveler,dir:"right",lines:["この世界には強力な魔物がいるらしい。","南の草原を越えた先には、古い遺跡があるとか…。"]},
+ {a:"village",x:4,y:4,name:"少女",pal:PAL.girl,dir:"down",lines:["ねえねえ、冒険者さん！","あの家のドアは、まだ鍵がかかっているの。","そのうち開くかも？"]}
+];
+const P={area:"field",x:5,y:9,dir:"up",hp:30,max:30,lv:1,gold:50};
+const KEY="elderia_save_v1";
+
+/* ================= 状態 ================= */
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+const dpr=Math.min(window.devicePixelRatio||1,2);
+cv.width=cv.height=S*dpr;
+let mv=null,dlg=null,held=null,running=false,last=0,fade={s:null,a:0,to:null},steps=0;
+const keys=new Set();
+const $=id=>document.getElementById(id);
+
+/* ================= ユーティリティ ================= */
+const hs=(a,b,c=0)=>{const s=Math.sin(a*127.1+b*311.7+c*74.7)*43758.5453;return s-Math.floor(s)};
+const tile=(c,r,a=P.area)=>(c<0||r<0||c>=N||r>=N)?"T":maps[a].rows[r][c];
+const npcs=()=>NPCS.filter(n=>n.a===P.area);
+const npcAt=(c,r)=>npcs().find(n=>n.x===c&&n.y===r);
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function circ(x,y,r,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,r,0,6.3);ctx.fill()}
+
+/* ================= タイル描画 ================= */
+function grass(c,r,t){
+ ctx.fillStyle=(c+r)%2?"#6aa947":"#65a244";ctx.fillRect(0,0,T,T);
+ for(let i=0;i<5;i++){
+  const gx=hs(c,r,i)*T,gy=6+hs(c,r,i+9)*(T-6),sw=Math.sin(t/700+gx)*1.6;
+  ctx.strokeStyle=i%2?"#86c65f":"#4d8a35";ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(gx,gy);ctx.quadraticCurveTo(gx,gy-4,gx+sw,gy-7);ctx.stroke();
+ }
+}
+function drawTile(ch,c,r,t){
+ const nb=(dx,dy)=>tile(c+dx,r+dy);
+ if(ch==="G"||ch==="F"||ch==="T"||ch==="O")grass(c,r,t);
+ if(ch==="F"){
+  const sw=Math.sin(t/500+c*2+r)*1.5;
+  for(let i=0;i<3;i++){
+   const fx=10+i*13+hs(c,r,i)*4,fy=14+hs(c,r,i+3)*20;
+   ctx.strokeStyle="#3f7a2e";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(fx,fy+9);ctx.lineTo(fx+sw,fy);ctx.stroke();
+   const col=["#ff8fb0","#fff2a0","#ffffff"][(c+r+i)%3];
+   for(let k=0;k<5;k++){const a=k*1.2566;circ(fx+sw+Math.cos(a)*3.2,fy+Math.sin(a)*3.2,2.4,col)}
+   circ(fx+sw,fy,1.8,"#e6a020");
+  }
+ }else if(ch==="P"||ch==="E"){
+  ctx.fillStyle="#c9a96f";ctx.fillRect(0,0,T,T);
+  for(let i=0;i<6;i++){ctx.fillStyle=i%2?"#dcc38f":"#a98a55";ctx.beginPath();ctx.ellipse(hs(c,r,i)*T,hs(c,r,i+5)*T,2.6,1.7,0,0,6.3);ctx.fill()}
+  ctx.fillStyle="#9c7e4c";
+  if(!"PE".includes(nb(-1,0)))ctx.fillRect(0,0,4,T);
+  if(!"PE".includes(nb(1,0)))ctx.fillRect(T-4,0,4,T);
+  if(!"PE".includes(nb(0,-1))&&nb(0,-1)!=="D")ctx.fillRect(0,0,T,4);
+  if(!"PE".includes(nb(0,1)))ctx.fillRect(0,T-4,T,4);
+  if(ch==="E"){
+   const g=ctx.createRadialGradient(24,24,2,24,24,28);const al=.35+.2*Math.sin(t/350);
+   g.addColorStop(0,`rgba(255,235,140,${al+.2})`);g.addColorStop(1,"rgba(255,235,140,0)");
+   ctx.fillStyle=g;ctx.fillRect(0,0,T,T);
+   ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineWidth=3;ctx.lineCap="round";
+   const up=r===0,o=Math.sin(t/300)*2;ctx.beginPath();
+   if(up){ctx.moveTo(15,28+o);ctx.lineTo(24,18+o);ctx.lineTo(33,28+o)}else{ctx.moveTo(15,20+o);ctx.lineTo(24,30+o);ctx.lineTo(33,20+o)}
+   ctx.stroke();
+  }
+ }else if(ch==="T"){
+  const sw=Math.sin(t/900+c+r)*1.4;
+  ctx.fillStyle="rgba(0,0,0,.25)";ctx.beginPath();ctx.ellipse(24,42,17,6,0,0,6.3);ctx.fill();
+  ctx.fillStyle="#6b4428";ctx.fillRect(20,28,8,16);
+  circ(24+sw,20,19,"#1f5a35");circ(17+sw,24,12,"#25683d");circ(31+sw,24,11,"#25683d");
+  circ(21+sw,14,12,"#2f8049");circ(16+sw,11,6,"#47a35f");
+ }else if(ch==="W"){
+  const g=ctx.createLinearGradient(0,0,0,T);g.addColorStop(0,"#3b8fd6");g.addColorStop(1,"#2468b0");
+  ctx.fillStyle=g;ctx.fillRect(0,0,T,T);
+  ctx.strokeStyle="rgba(255,255,255,.4)";ctx.lineWidth=1.6;
+  for(let i=0;i<3;i++){const y=9+i*15,o=Math.sin(t/600+c*2+i*1.7+r)*5;ctx.beginPath();ctx.moveTo(6+o,y);ctx.quadraticCurveTo(14+o,y-4,22+o,y);ctx.quadraticCurveTo(30+o,y+4,38+o,y);ctx.stroke()}
+  ctx.fillStyle="#d9c58f";
+  if(nb(-1,0)!=="W")ctx.fillRect(0,0,4,T);if(nb(1,0)!=="W")ctx.fillRect(T-4,0,4,T);
+  if(nb(0,-1)!=="W")ctx.fillRect(0,0,T,4);if(nb(0,1)!=="W")ctx.fillRect(0,T-4,T,4);
+ }else if(ch==="R"){
+  ctx.fillStyle="#b6483c";ctx.fillRect(0,0,T,T);
+  for(let k=0;k<4;k++){ctx.fillStyle=k%2?"#a33d33":"#c0554a";ctx.fillRect(0,k*12,T,12);
+   ctx.fillStyle="#8a2f27";ctx.fillRect(0,k*12+10,T,2);
+   for(let j=0;j<4;j++)ctx.fillRect(((k%2)*6+j*12),k*12,1.5,10)}
+  ctx.fillStyle="rgba(255,255,255,.18)";ctx.fillRect(0,0,T,3);
+  ctx.fillStyle="rgba(0,0,0,.3)";ctx.fillRect(0,T-4,T,4);
+ }else if(ch==="H"||ch==="D"){
+  ctx.fillStyle="#efe3c3";ctx.fillRect(0,0,T,T);
+  ctx.fillStyle="#8a6a45";ctx.fillRect(0,0,T,4);ctx.fillRect(0,0,4,T);ctx.fillRect(T-4,0,4,T);
+  ctx.fillStyle="#8d8574";ctx.fillRect(0,T-8,T,8);
+  ctx.fillStyle="rgba(0,0,0,.12)";for(let i=0;i<4;i++)ctx.fillRect(i*12+3,T-8,1.5,8);
+  if(ch==="H"){
+   ctx.fillStyle="#5a3a22";ctx.fillRect(11,10,26,22);
+   const g=ctx.createLinearGradient(0,10,0,32);g.addColorStop(0,"#9fd4f5");g.addColorStop(1,"#5b9cd0");
+   ctx.fillStyle=g;ctx.fillRect(14,13,9,16);ctx.fillRect(25,13,9,16);
+   ctx.fillStyle="rgba(255,255,255,.5)";ctx.fillRect(15,14,3,6);ctx.fillRect(26,14,3,6);
+  }else{
+   ctx.fillStyle="#4a2e17";ctx.beginPath();ctx.moveTo(10,T-8);ctx.lineTo(10,16);ctx.quadraticCurveTo(24,0,38,16);ctx.lineTo(38,T-8);ctx.fill();
+   ctx.fillStyle="#7a4a2a";ctx.beginPath();ctx.moveTo(13,T-8);ctx.lineTo(13,17);ctx.quadraticCurveTo(24,4,35,17);ctx.lineTo(35,T-8);ctx.fill();
+   ctx.strokeStyle="#4a2e17";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(24,8);ctx.lineTo(24,T-8);ctx.stroke();
+   circ(31,28,2.2,"#f5d77a");
+  }
+ }
+ if(ch==="O"){
+  ctx.fillStyle="rgba(0,0,0,.25)";ctx.beginPath();ctx.ellipse(24,38,18,6,0,0,6.3);ctx.fill();
+  ctx.fillStyle="#8a8f99";ctx.beginPath();ctx.ellipse(24,28,17,12,0,0,6.3);ctx.fill();
+  ctx.fillStyle="#b3b8c2";ctx.beginPath();ctx.ellipse(24,25,17,11,0,0,6.3);ctx.fill();
+  const g=ctx.createLinearGradient(0,17,0,33);g.addColorStop(0,"#5ab0ee");g.addColorStop(1,"#2a6fb5");
+  ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(24,25,12,7,0,0,6.3);ctx.fill();
+  ctx.strokeStyle="rgba(255,255,255,.6)";ctx.lineWidth=1.2;const rr1=2+(t/60%8);
+  ctx.beginPath();ctx.ellipse(24,25,rr1,rr1*.55,0,0,6.3);ctx.stroke();
+ }
+}
+
+/* ================= キャラ描画 ================= */
+function person(x,y,dir,p,bob,sw){
+ ctx.save();ctx.translate(x,y);
+ ctx.fillStyle="rgba(0,0,0,.3)";ctx.beginPath();ctx.ellipse(24,42,13,5,0,0,6.3);ctx.fill();
+ const b=bob;
+ const cape=()=>{ctx.fillStyle=p.cape;ctx.beginPath();ctx.moveTo(15,23+b);ctx.lineTo(33,23+b);ctx.lineTo(37,40+b+sw*.4);ctx.lineTo(11,40+b-sw*.4);ctx.fill()};
+ if(p.cape&&dir!=="up")cape();
+ ctx.fillStyle=p.pants;ctx.fillRect(17,33+b,6,9+sw);ctx.fillRect(25,33+b,6,9-sw);
+ ctx.fillStyle="#2a2018";ctx.fillRect(16,40+b+sw,8,3);ctx.fillRect(24,40+b-sw,8,3);
+ ctx.fillStyle=p.body;rr(15,21+b,18,16,5);ctx.fill();
+ ctx.fillStyle="rgba(255,255,255,.16)";rr(17,22+b,5,13,2);ctx.fill();
+ ctx.fillStyle="#3a2a1a";ctx.fillRect(15,31+b,18,3);ctx.fillStyle="#f5d77a";ctx.fillRect(22,31+b,4,3);
+ circ(14,28+b,3.6,p.body);circ(34,28+b,3.6,p.body);
+ if(p.sword){ctx.strokeStyle="#e3e9f5";ctx.lineWidth=3;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(38,31+b);ctx.lineTo(42,16+b);ctx.stroke();
+  ctx.strokeStyle="#c9a13a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(36,30+b);ctx.lineTo(41,31+b);ctx.stroke()}
+ circ(24,15+b,10,"#f6d3ac");
+ ctx.fillStyle=p.hair;ctx.beginPath();
+ if(dir==="up"){ctx.arc(24,15+b,10.5,0,6.3)}else{ctx.arc(24,14+b,10.5,Math.PI*.96,Math.PI*2.04);ctx.lineTo(33,13+b);ctx.lineTo(28,10+b);ctx.lineTo(20,11+b);ctx.lineTo(15,13+b)}
+ ctx.fill();
+ if(dir!=="up"){const ox=dir==="left"?-3:dir==="right"?3:0;circ(24+ox-3.6,17+b,1.6,"#222");circ(24+ox+3.6,17+b,1.6,"#222")}
+ if(p.band){ctx.fillStyle="#e9e9f5";ctx.fillRect(14.5,11+b,19,3)}
+ if(p.beard&&dir!=="up"){ctx.fillStyle="#f2f2f2";ctx.beginPath();ctx.ellipse(24,24+b,7,5,0,0,6.3);ctx.fill()}
+ if(p.hat){ctx.fillStyle=p.hat;ctx.beginPath();ctx.ellipse(24,9+b,15,4,0,0,6.3);ctx.fill();rr(16,0+b,16,10,5);ctx.fill()}
+ if(p.ribbon){circ(32,8+b,3,"#d9334a");circ(36,10+b,3,"#d9334a")}
+ if(p.cape&&dir==="up")cape();
+ ctx.restore();
+}
+
+/* ================= 描画ループ ================= */
+const fl=Array.from({length:18},(_,i)=>({x:hs(i,1)*S,y:hs(i,2)*S,s:.5+hs(i,3),p:hs(i,4)*6}));
+let vig=null;
+function render(t){
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ const rows=maps[P.area].rows;
+ for(let r=0;r<N;r++)for(let c=0;c<N;c++){ctx.save();ctx.translate(c*T,r*T);drawTile(rows[r][c],c,r,t);ctx.restore()}
+ let px=P.x*T,py=P.y*T,bob=Math.sin(t/450)*.8,sw=0;
+ if(mv){const k=Math.min(1,(t-mv.t0)/150);px=(mv.fx+(mv.tx-mv.fx)*k)*T;py=(mv.fy+(mv.ty-mv.fy)*k)*T;bob=-Math.abs(Math.sin(k*Math.PI))*3;sw=Math.sin(k*Math.PI*2)*3.5}
+ const ents=npcs().map(n=>({y:n.y*T,f:()=>person(n.x*T,n.y*T,n.dir,n.pal,Math.sin(t/500+n.x)*.8,0)}));
+ ents.push({y:py,f:()=>person(px,py,P.dir,PAL.hero,bob,sw)});
+ ents.sort((a,b)=>a.y-b.y).forEach(e=>e.f());
+ for(const f of fl){
+  const y=((f.y-t*f.s*.012)%S+S)%S,x=f.x+Math.sin(t/1400+f.p)*18;
+  ctx.fillStyle=`rgba(255,250,190,${.35+.3*Math.sin(t/500+f.p)})`;ctx.beginPath();ctx.arc(x,y,1.8,0,6.3);ctx.fill();
+ }
+ if(!vig){vig=ctx.createRadialGradient(S/2,S/2,S*.38,S/2,S/2,S*.78);vig.addColorStop(0,"rgba(10,10,40,0)");vig.addColorStop(1,"rgba(10,10,40,.5)")}
+ ctx.fillStyle=vig;ctx.fillRect(0,0,S,S);
+ if(fade.a>0){ctx.fillStyle=`rgba(0,0,0,${fade.a})`;ctx.fillRect(0,0,S,S)}
+}
+function frame(now){
+ if(!running)return;
+ const dt=Math.min(50,now-(last||now));last=now;
+ update(now,dt);render(now);
+ requestAnimationFrame(frame);
+}
+function update(now,dt){
+ if(mv&&now-mv.t0>=150){P.x=mv.tx;P.y=mv.ty;mv=null;steps++;arrive()}
+ if(fade.s==="out"){fade.a+=dt/230;if(fade.a>=1){fade.a=1;const o=fade.to;P.area=o.area;P.x=o.x;P.y=o.y;P.dir=o.dir;banner(maps[P.area].name);fade.s="in";save()}}
+ else if(fade.s==="in"){fade.a-=dt/230;if(fade.a<=0){fade.a=0;fade.s=null}}
+ if(dlg&&dlg.n<dlg.lines[dlg.i].length){dlg.acc+=dt;while(dlg.acc>=28&&dlg.n<dlg.lines[dlg.i].length){dlg.acc-=28;dlg.n++}$("dtext").textContent=dlg.lines[dlg.i].slice(0,dlg.n);$("dnext").style.visibility=dlg.n>=dlg.lines[dlg.i].length?"visible":"hidden"}
+ const want=held||[...keys].pop();
+ if(want&&!mv&&!dlg&&!fade.s)tryMove(want,now);
+}
+
+/* ================= 操作 ================= */
+function tryMove(d,now){
+ P.dir=d;const [dx,dy]=D[d],nx=P.x+dx,ny=P.y+dy;
+ if(nx<0||ny<0||nx>=N||ny>=N)return;
+ if(BLOCK.has(tile(nx,ny))||npcAt(nx,ny))return;
+ mv={fx:P.x,fy:P.y,tx:nx,ty:ny,t0:now||performance.now()};
+}
+function arrive(){
+ if(tile(P.x,P.y)==="E"){fade.s="out";fade.to=maps[P.area].exit}else if(steps%4===0)save();
+}
+function say(name,lines){dlg={name,lines,i:0,n:0,acc:0};$("dname").textContent=name;$("dtext").textContent="";$("dnext").style.visibility="hidden";$("dlg").style.display="block"}
+function advance(){
+ if(!dlg)return;
+ if(dlg.n<dlg.lines[dlg.i].length){dlg.n=dlg.lines[dlg.i].length;return}
+ dlg.i++;
+ if(dlg.i>=dlg.lines.length){dlg=null;$("dlg").style.display="none";save()}else{dlg.n=0;dlg.acc=0}
+}
+function act(){
+ if(dlg){advance();return}
+ if(mv||fade.s)return;
+ const [dx,dy]=D[P.dir],fx=P.x+dx,fy=P.y+dy;
+ let n=npcAt(fx,fy)||npcs().find(o=>Math.abs(o.x-P.x)+Math.abs(o.y-P.y)===1);
+ if(n){n.dir=Math.abs(P.x-n.x)>Math.abs(P.y-n.y)?(P.x>n.x?"right":"left"):(P.y>n.y?"down":"up");say(n.name,n.lines);return}
+ const ch=tile(fx,fy);
+ if(ch==="D"){say("",["扉には鍵がかかっている。"]);return}
+ if(ch==="O"){P.hp=P.max;hud();say("",["井戸の水はひんやりと澄んでいる。","HPが全回復した！"]);return}
+ say("",["……しかし、何も見つからなかった。"]);
+}
+function hud(){$("hLv").textContent="Lv."+P.lv;$("hHp").textContent=P.hp+"/"+P.max;$("hBar").style.width=(P.hp/P.max*100)+"%";$("hG").textContent=P.gold}
+function banner(txt){const b=$("banner");b.textContent=txt;b.classList.remove("show");void b.offsetWidth;b.classList.add("show")}
+
+/* ---- 入力 ---- */
+document.querySelectorAll(".d").forEach(b=>{
+ const d=b.dataset.d,on=e=>{e.preventDefault();held=d;b.classList.add("on")},off=()=>{if(held===d)held=null;b.classList.remove("on")};
+ b.addEventListener("pointerdown",on);["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,off));
+});
+$("aBtn").addEventListener("pointerdown",e=>{e.preventDefault();act()});
+$("dlg").addEventListener("pointerdown",e=>{e.preventDefault();advance()});
+document.addEventListener("keydown",e=>{
+ const m={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"}[e.key];
+ if(m){keys.delete(m);keys.add(m);e.preventDefault()}
+ else if(e.key===" "||e.key==="Enter"||e.key==="z"){e.preventDefault();act()}
+});
+document.addEventListener("keyup",e=>{const m={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right",w:"up",s:"down",a:"left",d:"right"}[e.key];if(m)keys.delete(m)});
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+
+/* ---- セーブ ---- */
+function save(){try{localStorage.setItem(KEY,JSON.stringify({area:P.area,x:P.x,y:P.y,dir:P.dir,hp:P.hp}))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&maps[s.area]?s:null}catch(e){return null}}
+
+/* ---- 画面遷移 ---- */
+function enter(){
+ $("title").style.display="none";$("game").style.display="flex";
+ mv=null;dlg=null;held=null;fade={s:null,a:0,to:null};$("dlg").style.display="none";
+ hud();banner(maps[P.area].name);
+ if(!running){running=true;last=0;requestAnimationFrame(frame)}
+}
+function startGame(){Object.assign(P,{area:"field",x:5,y:9,dir:"up",hp:30,max:30,lv:1,gold:50});save();enter()}
+function continueGame(){const s=load();if(!s)return;Object.assign(P,s);enter()}
+function backToTitle(){save();running=false;$("game").style.display="none";$("title").style.display="flex";$("contBtn").disabled=!load()}
+$("contBtn").disabled=!load();
+(function(){const t=$("title");for(let i=0;i<46;i++){const s=document.createElement("div");s.className="star";s.style.left=Math.random()*100+"%";s.style.top=Math.random()*55+"%";s.style.animationDelay=Math.random()*3+"s";t.insertBefore(s,t.firstChild)}})();
+</script>
+</body>
+</html>
