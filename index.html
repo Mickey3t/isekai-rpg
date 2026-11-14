@@ -1,349 +1,266 @@
 
-
 <!DOCTYPE html>
-
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>異世界エルディア</title>
-
 <style>
-
 * { box-sizing: border-box; }
-
 body {
-
   margin: 0;
-
   background: #151b24;
-
   color: white;
-
   font-family: sans-serif;
-
   text-align: center;
-
 }
-
-h1 { color: #f5d77a; margin: 24px 0 10px; }
-
+h1 { color: #f5d77a; }
 button {
-
   background: #315d91;
-
   color: white;
-
   border: 2px solid #9dc7ef;
-
   border-radius: 8px;
-
-  padding: 12px 20px;
-
+  padding: 12px 18px;
   font-size: 17px;
-
-  margin: 6px;
-
-  cursor: pointer;
-
+  margin: 5px;
 }
-
-#title, #game { padding: 12px; }
-
-#game { display: none; }
-
-#status {
-
+#title { padding: 15px; }
+#game { display: none; padding: 10px; }
+#status, #message {
   background: #263849;
-
-  padding: 10px;
-
-  margin: 10px auto;
-
-  max-width: 480px;
-
   border-radius: 8px;
-
+  padding: 12px;
+  margin: 10px auto;
+  max-width: 450px;
 }
-
+#message { min-height: 55px; color: #ffe69a; }
 #map {
-
   display: grid;
-
-  grid-template-columns: repeat(9, 1fr);
-
-  width: min(94vw, 450px);
-
+  grid-template-columns: repeat(11, 1fr);
+  width: min(96vw, 460px);
   aspect-ratio: 1;
-
   margin: 12px auto;
-
   border: 4px solid #d4bd83;
-
 }
-
 .tile {
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  font-size: clamp(16px, 5vw, 27px);
-
-  background: #72a94c;
-
-  user-select: none;
-
+  font-size: clamp(14px, 5vw, 25px);
+  overflow: hidden;
 }
-
 .grass { background: #72a94c; }
-
 .tree { background: #28643e; }
-
 .path { background: #b99a65; }
-
-.water { background: #398bc0; }
-
+.house { background: #a66b48; }
 .player { background: #e6cf7b; }
-
+.npc { background: #7e9ed1; }
 #controls {
-
   display: grid;
-
   grid-template-columns: repeat(3, 65px);
-
   justify-content: center;
-
   gap: 5px;
-
-  margin: 15px auto;
-
+  margin: 12px auto;
 }
-
-#controls button {
-
-  margin: 0;
-
-  padding: 12px 0;
-
-  font-size: 23px;
-
-}
-
-#message {
-
-  min-height: 48px;
-
-  color: #ffe69a;
-
-  padding: 10px;
-
-}
-
+#controls button { margin: 0; padding: 12px 0; font-size: 23px; }
 </style>
-
 </head>
-
 <body>
 
 <div id="title">
-
   <h1>異世界エルディア</h1>
-
   <p>～運命を切り開く冒険者～</p>
-
   <p style="font-size:65px">🏰</p>
-
   <button onclick="startGame()">冒険をはじめる</button>
-
   <br>
-
   <button onclick="continueGame()">冒険を続ける</button>
-
 </div>
 
 <div id="game">
-
-  <h2>始まりの草原</h2>
-
+  <h2 id="areaName">始まりの草原</h2>
   <div id="status">冒険者 Lv.1　HP 30/30</div>
-
   <div id="map"></div>
+  <div id="message">冒険が始まった！</div>
 
-  <div id="message">草原の冒険が始まった！</div>
+  <button onclick="talk()">話す</button>
 
   <div id="controls">
-
     <span></span>
-
     <button onclick="move(0,-1)">▲</button>
-
     <span></span>
-
     <button onclick="move(-1,0)">◀</button>
-
     <button onclick="move(0,1)">▼</button>
-
     <button onclick="move(1,0)">▶</button>
-
   </div>
 
   <button onclick="backToTitle()">タイトルへ戻る</button>
-
 </div>
 
 <script>
+const N = 11;
 
-const size = 9;
+const maps = {
+ field: [
+  "GGGGGGGGGGG",
+  "GTTGGGGGTTG",
+  "GGGGGGGGGGG",
+  "GGGPPPPPGGG",
+  "GGGPGGGPGGG",
+  "GGGPGGGPGGG",
+  "GGGPPPPPGGG",
+  "GGGGGGGGGGG",
+  "GGGGGGGGGGG",
+  "GGGGGGGGGGG",
+  "GGGGGGGGGGG"
+ ],
+ village: [
+  "GGGGGGGGGGG",
+  "GHHGGGGHHG",
+  "GHHGGGGHHG",
+  "GGGPPPPPGGG",
+  "GGGPGGGPGGG",
+  "GGGPGGGPGGG",
+  "GGGPPPPPGGG",
+  "GGGGNGGGGGG",
+  "GGGGGGGGGGG",
+  "GGGGGGGGGGG",
+  "GGGGGGGGGGG"
+ ]
+};
 
-let x = 4;
+let area = "field";
+let x = 5;
+let y = 9;
 
-let y = 6;
-
-const map = [
-
-  "GGGGGGGGG",
-
-  "GTTGGTTTG",
-
-  "GGGGGGGGG",
-
-  "GGPPPPGGG",
-
-  "GGPGGPGGG",
-
-  "GGPGGPGGG",
-
-  "GGPPPPGGG",
-
-  "GGGGGGGGG",
-
-  "GGGGGGGGG"
-
+const npcs = [
+ {x:4, y:7, name:"村人", message:"ようこそ、エルディアの村へ！"},
+ {x:6, y:7, name:"旅人", message:"この世界には強力な魔物がいるらしい。"},
+ {x:5, y:4, name:"村長", message:"冒険者よ。まずは世界を見て回るといい。"}
 ];
 
 function startGame() {
-
-  x = 4;
-
-  y = 6;
-
-  document.getElementById("title").style.display = "none";
-
-  document.getElementById("game").style.display = "block";
-
-  document.getElementById("message").textContent =
-
-    "異世界エルディアへようこそ！冒険を始めよう。";
-
-  drawMap();
-
+ area = "field";
+ x = 5;
+ y = 9;
+ document.getElementById("title").style.display = "none";
+ document.getElementById("game").style.display = "block";
+ showMessage("異世界エルディアへようこそ！");
+ drawMap();
 }
 
 function continueGame() {
-
-  alert("冒険の記録はまだありません。");
-
+ alert("冒険の記録はまだありません。");
 }
 
 function backToTitle() {
+ document.getElementById("game").style.display = "none";
+ document.getElementById("title").style.display = "block";
+}
 
-  document.getElementById("game").style.display = "none";
-
-  document.getElementById("title").style.display = "block";
-
+function showMessage(msg) {
+ document.getElementById("message").textContent = msg;
 }
 
 function drawMap() {
+ const map = maps[area];
+ const board = document.getElementById("map");
+ board.innerHTML = "";
 
-  const area = document.getElementById("map");
+ document.getElementById("areaName").textContent =
+   area === "field" ? "始まりの草原" : "エルディアの村";
 
-  area.innerHTML = "";
+ for (let row = 0; row < N; row++) {
+  for (let col = 0; col < N; col++) {
+   const tile = document.createElement("div");
+   const type = map[row][col];
+   const npc = area === "village"
+     ? npcs.find(n => n.x === col && n.y === row)
+     : null;
 
-  for (let row = 0; row < size; row++) {
+   if (col === x && row === y) {
+    tile.className = "tile player";
+    tile.textContent = "🧙";
+   } else if (npc) {
+    tile.className = "tile npc";
+    tile.textContent = npc.name === "村長" ? "👴" :
+      npc.name === "旅人" ? "🧔" : "🧑";
+   } else if (type === "T") {
+    tile.className = "tile tree";
+    tile.textContent = "🌲";
+   } else if (type === "H") {
+    tile.className = "tile house";
+    tile.textContent = "🏠";
+   } else if (type === "P") {
+    tile.className = "tile path";
+   } else {
+    tile.className = "tile grass";
+    tile.textContent = "🌿";
+   }
 
-    for (let col = 0; col < size; col++) {
-
-      const tile = document.createElement("div");
-
-      const type = map[row][col];
-
-      if (col === x && row === y) {
-
-        tile.className = "tile player";
-
-        tile.textContent = "🧙";
-
-      } else if (type === "T") {
-
-        tile.className = "tile tree";
-
-        tile.textContent = "🌲";
-
-      } else if (type === "P") {
-
-        tile.className = "tile path";
-
-        tile.textContent = " ";
-
-      } else {
-
-        tile.className = "tile grass";
-
-        tile.textContent = "🌿";
-
-      }
-
-      area.appendChild(tile);
-
-    }
-
+   board.appendChild(tile);
   }
-
+ }
 }
 
 function move(dx, dy) {
+ const nx = x + dx;
+ const ny = y + dy;
 
-  const nx = x + dx;
+ if (nx < 0 || nx >= N || ny < 0 || ny >= N) return;
 
-  const ny = y + dy;
+ const map = maps[area];
+ const type = map[ny][nx];
 
-  if (nx < 0 || nx >= size || ny < 0 || ny >= size) {
+ if (type === "T" || type === "H") {
+  showMessage("そこには進めない！");
+  return;
+ }
 
-    return;
+ if (area === "village" &&
+     npcs.some(n => n.x === nx && n.y === ny)) {
+  showMessage("村人がいる。隣から話しかけてみよう。");
+  return;
+ }
 
-  }
+ x = nx;
+ y = ny;
 
-  if (map[ny][nx] === "T") {
+ if (area === "field" && x === 5 && y === 6) {
+  area = "village";
+  x = 5;
+  y = 9;
+  showMessage("エルディアの村に到着した！");
+ } else if (area === "village" && x === 5 && y === 9) {
+  area = "field";
+  x = 5;
+  y = 6;
+  showMessage("始まりの草原に戻った！");
+ } else {
+  showMessage("冒険を続けよう。");
+ }
 
-    document.getElementById("message").textContent =
-
-      "木があって進めない！";
-
-    return;
-
-  }
-
-  x = nx;
-
-  y = ny;
-
-  document.getElementById("message").textContent =
-
-    "草原を冒険中……";
-
-  drawMap();
-
+ drawMap();
 }
 
+function talk() {
+ if (area !== "village") {
+  showMessage("ここには話せる人はいない。");
+  return;
+ }
+
+ const npc = npcs.find(n =>
+  Math.abs(n.x - x) + Math.abs(n.y - y) === 1
+ );
+
+ if (!npc) {
+  showMessage("近くに話せる人はいない。");
+  return;
+ }
+
+ showMessage(npc.name + "：「" + npc.message + "」");
+}
+
+drawMap();
 </script>
-
 </body>
-
 </html>
