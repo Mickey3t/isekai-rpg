@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>異世界転生冒険記</title>
+<title>異世界エルディア</title>
 
 <style>
 
@@ -20,7 +20,7 @@ body {
 
   margin: 0;
 
-  background: #101b2b;
+  background: #151b24;
 
   color: white;
 
@@ -30,83 +30,119 @@ body {
 
 }
 
-.game {
-
-  min-height: 100vh;
-
-  padding: 30px 18px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  align-items: center;
-
-  background: linear-gradient(#203f5c, #101b2b);
-
-}
-
-h1 {
-
-  font-size: 34px;
-
-  color: #ffe29a;
-
-  text-shadow: 3px 3px #513b22;
-
-}
-
-.castle {
-
-  font-size: 90px;
-
-  margin: 25px 0;
-
-}
-
-.subtitle {
-
-  color: #c9d9e8;
-
-  letter-spacing: 3px;
-
-}
+h1 { color: #f5d77a; margin: 24px 0 10px; }
 
 button {
 
-  width: 85%;
-
-  max-width: 300px;
-
-  padding: 17px;
-
-  margin-top: 15px;
-
-  border: 2px solid #f5d48b;
-
-  border-radius: 10px;
-
-  background: #80552d;
+  background: #315d91;
 
   color: white;
 
-  font-size: 19px;
+  border: 2px solid #9dc7ef;
 
-  font-weight: bold;
+  border-radius: 8px;
+
+  padding: 12px 20px;
+
+  font-size: 17px;
+
+  margin: 6px;
+
+  cursor: pointer;
 
 }
 
-button:active { background: #bd8746; }
+#title, #game { padding: 12px; }
+
+#game { display: none; }
+
+#status {
+
+  background: #263849;
+
+  padding: 10px;
+
+  margin: 10px auto;
+
+  max-width: 480px;
+
+  border-radius: 8px;
+
+}
+
+#map {
+
+  display: grid;
+
+  grid-template-columns: repeat(9, 1fr);
+
+  width: min(94vw, 450px);
+
+  aspect-ratio: 1;
+
+  margin: 12px auto;
+
+  border: 4px solid #d4bd83;
+
+}
+
+.tile {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: clamp(16px, 5vw, 27px);
+
+  background: #72a94c;
+
+  user-select: none;
+
+}
+
+.grass { background: #72a94c; }
+
+.tree { background: #28643e; }
+
+.path { background: #b99a65; }
+
+.water { background: #398bc0; }
+
+.player { background: #e6cf7b; }
+
+#controls {
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 65px);
+
+  justify-content: center;
+
+  gap: 5px;
+
+  margin: 15px auto;
+
+}
+
+#controls button {
+
+  margin: 0;
+
+  padding: 12px 0;
+
+  font-size: 23px;
+
+}
 
 #message {
 
-  margin-top: 25px;
+  min-height: 48px;
 
-  line-height: 1.8;
+  color: #ffe69a;
 
-  color: #ffe29a;
+  padding: 10px;
 
 }
 
@@ -116,39 +152,193 @@ button:active { background: #bd8746; }
 
 <body>
 
-<div class="game">
+<div id="title">
 
-  <p class="subtitle">～ 剣と魔法の異世界へ ～</p>
+  <h1>異世界エルディア</h1>
 
-  <h1>異世界転生<br>冒険記</h1>
+  <p>～運命を切り開く冒険者～</p>
 
-  <div class="castle">🏰</div>
+  <p style="font-size:65px">🏰</p>
 
-  <p>ここから、君の伝説が始まる。</p>
+  <button onclick="startGame()">冒険をはじめる</button>
 
-  <button onclick="startGame()">冒険を始める</button>
+  <br>
 
-  <button onclick="showContinue()">冒険を続ける</button>
+  <button onclick="continueGame()">冒険を続ける</button>
 
-  <div id="message"></div>
+</div>
+
+<div id="game">
+
+  <h2>始まりの草原</h2>
+
+  <div id="status">冒険者 Lv.1　HP 30/30</div>
+
+  <div id="map"></div>
+
+  <div id="message">草原の冒険が始まった！</div>
+
+  <div id="controls">
+
+    <span></span>
+
+    <button onclick="move(0,-1)">▲</button>
+
+    <span></span>
+
+    <button onclick="move(-1,0)">◀</button>
+
+    <button onclick="move(0,1)">▼</button>
+
+    <button onclick="move(1,0)">▶</button>
+
+  </div>
+
+  <button onclick="backToTitle()">タイトルへ戻る</button>
 
 </div>
 
 <script>
 
+const size = 9;
+
+let x = 4;
+
+let y = 6;
+
+const map = [
+
+  "GGGGGGGGG",
+
+  "GTTGGTTTG",
+
+  "GGGGGGGGG",
+
+  "GGPPPPGGG",
+
+  "GGPGGPGGG",
+
+  "GGPGGPGGG",
+
+  "GGPPPPGGG",
+
+  "GGGGGGGGG",
+
+  "GGGGGGGGG"
+
+];
+
 function startGame() {
 
-  document.getElementById("message").innerHTML =
+  x = 4;
 
-    "異世界エルディアへようこそ！<br>君は新たな冒険者として目覚めた。";
+  y = 6;
 
-}
+  document.getElementById("title").style.display = "none";
 
-function showContinue() {
+  document.getElementById("game").style.display = "block";
 
   document.getElementById("message").textContent =
 
-    "冒険の記録はまだありません。";
+    "異世界エルディアへようこそ！冒険を始めよう。";
+
+  drawMap();
+
+}
+
+function continueGame() {
+
+  alert("冒険の記録はまだありません。");
+
+}
+
+function backToTitle() {
+
+  document.getElementById("game").style.display = "none";
+
+  document.getElementById("title").style.display = "block";
+
+}
+
+function drawMap() {
+
+  const area = document.getElementById("map");
+
+  area.innerHTML = "";
+
+  for (let row = 0; row < size; row++) {
+
+    for (let col = 0; col < size; col++) {
+
+      const tile = document.createElement("div");
+
+      const type = map[row][col];
+
+      if (col === x && row === y) {
+
+        tile.className = "tile player";
+
+        tile.textContent = "🧙";
+
+      } else if (type === "T") {
+
+        tile.className = "tile tree";
+
+        tile.textContent = "🌲";
+
+      } else if (type === "P") {
+
+        tile.className = "tile path";
+
+        tile.textContent = " ";
+
+      } else {
+
+        tile.className = "tile grass";
+
+        tile.textContent = "🌿";
+
+      }
+
+      area.appendChild(tile);
+
+    }
+
+  }
+
+}
+
+function move(dx, dy) {
+
+  const nx = x + dx;
+
+  const ny = y + dy;
+
+  if (nx < 0 || nx >= size || ny < 0 || ny >= size) {
+
+    return;
+
+  }
+
+  if (map[ny][nx] === "T") {
+
+    document.getElementById("message").textContent =
+
+      "木があって進めない！";
+
+    return;
+
+  }
+
+  x = nx;
+
+  y = ny;
+
+  document.getElementById("message").textContent =
+
+    "草原を冒険中……";
+
+  drawMap();
 
 }
 
