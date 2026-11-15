@@ -46,7 +46,21 @@ html,body{margin:0;height:100%;background:#070b17;color:#fff;overflow:hidden;ove
 .menu{padding:6px 10px;font-size:12px;color:#fff;background:#2a3a6a;border:1px solid #8fa0d8;border-radius:8px;font-family:inherit}
 #stage{position:relative;width:calc(100% - 16px);margin:0 8px;aspect-ratio:1;border:3px solid #d8c07a;border-radius:10px;overflow:hidden;
   box-shadow:0 0 0 2px #4a3a14,0 8px 24px rgba(0,0,0,.6)}
-#cv{width:100%;height:100%;display:block;touch-action:none}
+#cv{
+
+  width:100%;
+
+  height:100%;
+
+  display:block;
+
+  touch-action:none;
+
+  image-rendering:pixelated;
+
+  image-rendering:crisp-edges;
+
+}
 #banner{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:20px;letter-spacing:.25em;font-weight:700;
   text-shadow:0 2px 6px #000,0 0 14px rgba(255,220,120,.7);opacity:0;pointer-events:none}
 #banner.show{animation:ban 2.6s ease}
@@ -145,7 +159,7 @@ const KEY="elderia_save_v1";
 /* ================= 状態 ================= */
 const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
 const dpr=Math.min(window.devicePixelRatio||1,2);
-cv.width=cv.height=S*dpr;
+cv.width=cv.height=(S/3)*dpr;
 let mv=null,dlg=null,held=null,running=false,last=0,fade={s:null,a:0,to:null},steps=0;
 const keys=new Set();
 const $=id=>document.getElementById(id);
@@ -277,7 +291,7 @@ function person(x,y,dir,p,bob,sw){
 const fl=Array.from({length:18},(_,i)=>({x:hs(i,1)*S,y:hs(i,2)*S,s:.5+hs(i,3),p:hs(i,4)*6}));
 let vig=null;
 function render(t){
- ctx.setTransform(dpr,0,0,dpr,0,0);
+ctx.setTransform(dpr/3,0,0,dpr/3,0,0);
  const rows=maps[P.area].rows;
  for(let r=0;r<N;r++)for(let c=0;c<N;c++){ctx.save();ctx.translate(c*T,r*T);drawTile(rows[r][c],c,r,t);ctx.restore()}
  let px=P.x*T,py=P.y*T,bob=Math.sin(t/450)*.8,sw=0;
